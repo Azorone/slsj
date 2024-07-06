@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="/css/element.css">
+<style>
+    * {
+        padding: 0px;
+        margin: 0px;
+    }
+
+
+
+    .hov {
+        color: rgb(211, 236, 236);
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .diva {
+        position: relative;
+        margin: auto;
+        width: 300px;
+        height: 300px;
+
+        background: #ddd;
+        overflow: hidden;
+        -webkit-mask:
+            linear-gradient(#000, #000 3px, transparent 3px, transparent calc(100% - 3px), #000 calc(100% - 3px), #000),
+            linear-gradient(90deg, #000, #000 3px, transparent 3px, transparent, transparent calc(100% - 3px), #000 calc(100% - 3px), #000);
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -50%;
+            top: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(#fc0, #ff5722 25%, transparent 25%, transparent);
+            -webkit-animation: rotate 4s linear infinite;
+        }
+    }
+
+    @keyframes rotate {
+        100% {
+            -webkit-transform: rotate(1turn);
+        }
+    }
+</style>
+
+<body>
+    <div id="app">
+        <div style="position: absolute; width: 100%; height: 100%; z-index: 100;
+             background-color: #fcfcfc; font-size: 60px;text-align: center;  " v-if="fi">
+
+        </div>
+        <el-container>
+            <el-header style="background-color: #108e92; display: flex; justify-content: right;align-items: center;">
+
+                <div v-if="fl" class="hov" @click="addV= true">
+                    添加任务
+                </div>
+
+                <div v-if="!fl && key==0" class="hov" @click="returnTaskList">
+                    返回
+                </div>
+                <div v-if="!fl" class="hov" @click="editV = true">
+                    编辑任务
+                </div>
+            </el-header>
+            <el-main v-if="fl" style="overflow-y: scroll; background-color: #e3fdfd;">
+                <div v-for="(item,index) in curTaskList" @click="toDoingTask(index)">
+                    <el-card style="margin-bottom: 10px; background-color:#abe2db; ">
+
+                        <div style="display: flex;">
+                            <div style="min-width: 80%;">
+                                <p style="color:#40514e; font-size: 16px;">{{item.taskName}}</p>
+                                <div style="font-size: 10px; color:#40514e; padding-top: 16px;">
+                                    积累时间：{{msToHour(item.taskAccTime)}}
+                                </div>
+                                <div style="font-size: 10px; color:#40514e; padding-top: 4px;">完成次数：{{item.taskTimes}}
+                                </div>
+                            </div>
+                            <div style="display: flex;  justify-content: flex-end; width: 20%;">
+                                <div style="background-color: #e3fdfd; width: 20px; height: 20px;">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </el-card>
+                </div>
+            </el-main>
+            <el-main v-if="!fl" style="width: 100%; ">
+                <div style="display: flex; justify-content: center;">
+                    <!--<div style=" height: 40px; border: #108e92; 
+                                border-style: ridge; 
+                                align-items: center;
+                                align-items: center;
+                                line-height: 40px;
+                                padding: 10px;border-radius: 40px; color: #024527; font-weight: 900;">
+                        正计时
+                    </div>
+                    <div
+                        style=" height: 40px; border: #108e92; 
+                                                    border-style: ridge; 
+                                                    align-items: center;
+                                                    align-items: center;
+                                                    line-height: 40px;
+                                                    padding: 10px;border-radius: 40px;color: #024527; font-weight: 900; visibility: hidden;">
+                        正计时
+                    </div>
+                    <div style=" height: 40px; border: #108e92; 
+                                border-style: ridge; 
+                                align-items: center;
+                                align-items: center;
+                                line-height: 40px;
+                                padding: 10px;border-radius: 40px;color: #024527; font-weight: 900;">
+                        正计时
+                    </div>
+                    --->
+
+                </div>
+
+
+                <div style="width: 100%; position:sticky; margin-top:100px;">
+                    <div class="diva" style="visibility: hidden;" id="hv1">
+
+                    </div>
+                    <div style="position: absolute; 
+                        width: 300px; 
+                        margin-left: -150px; 
+                        margin-right: -150px;
+                        left: 50%;
+                        justify-items: center; 
+                        text-align: center; top: 20%;font-size: 50px;">
+                        <p>
+                            {{data}}
+                        </p>
+                        <div style="visibility: hidden;" id="hv2">
+                            <div v-if="key == 1">
+                                <div>
+                                    坚持
+                                </div>
+                                <div>
+                                    加油
+                                </div>
+                            </div>
+                            <div v-if="key == 0">
+                                <div>
+                                    记得
+                                </div>
+                                <div>
+                                    回来哟
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style="display: flex; justify-content: center;">
+                        <div style="margin: 10px; font-size: 30px;" v-if="key == 0" @click="start()">
+                            开始
+                        </div>
+                        <div style="margin: 10px; font-size: 30px;" v-if="key == 1" @click="end()">
+                            结束
+                        </div>
+                        <div style="margin: 10px; font-size: 30px;" v-if="key == 1" @click="pause()">
+                            暂停
+                        </div>
+                    </div>
+
+                </div>
+
+            </el-main>
+        </el-container>
+        <el-dialog :visible.sync="dialogTableVisible" width="80%">
+            <div style="min-height: 400px; ">
+                <p style="color: #108e92; font-size: 60px; ">{{getToday().year}}年</p>
+                <p style="color: #108e92;  font-size: 30px;">{{`${getToday().month}月${getToday().day}日 `}}</p>
+                <p style="color: #000; font-size: 20px;">
+                    {{curTaskObject.taskName}}
+                </p>
+                <p style="color: #40514e; font-size:15px; color: #000; font-weight: 900;">持续时间：{{endData}}</p>
+            </div>
+            <div style="height: 100px;background-color: #108e92; text-align: center; line-height: 100px; font-size: 60px; color: aliceblue; "
+                @click="Recording()">
+                记录
+            </div>
+        </el-dialog>
+        <el-dialog :visible.sync="editV" width="80%">
+            <div style="min-height: 300px; ">
+                <el-form :model="curTaskObject" label-width="80px">
+                    <el-form-item label="任务:">
+                        <el-input v-model="curTaskObject.taskName"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div style="height: 30px;background-color: #108e92; text-align: center; line-height: 30px; font-size: 15px; color: rgb(255, 0, 0);border-radius: 8px;"
+                @click="del()">
+                删除
+            </div>
+            <div style="height: 100px;background-color: #108e92; text-align: center; line-height: 100px; font-size: 30px; color: aliceblue; border-radius: 8px;  margin-top: 10px;"
+                @click="edit()">
+                确认
+            </div>
+
+        </el-dialog>
+        <el-dialog :visible.sync="addV" width="80%">
+            <div style="min-height: 300px; ">
+                <el-form :model="fromAdd" label-width="80px">
+                    <el-form-item label="任务:">
+                        <el-input v-model="fromAdd.taskName"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div style="height: 100px;background-color: #108e92; text-align: center; line-height: 100px; font-size: 30px; color: aliceblue; border-radius: 8px;  margin-top: 10px;"
+                @click="add()">
+                确认
+            </div>
+
+        </el-dialog>
+    </div>
+    <script src="/js/vue.js"></script>
+    <script src="/js/element.js"></script>
+    <script>
+        vm = new Vue({
+            el: "#app",
+            data: {
+                fi: false,
+                addV: false,
+                dialogTableVisible: false,
+                a: "as",
+                fl: true,
+                curTask: 'sad',
+                key: 0,
+                timer: -1,
+                times: 0,
+                data: "00:00:00",
+                endData: "00:00:00",
+                endtimes: 0,
+                editV: false,
+                curTaskObject: {
+                    tid: '',
+                    taskName: '',
+                    taskTimes: 1,
+                    taskAccTime: 0,
+                },
+                fromAdd: {
+                    taskName: '',
+                    taskTimes: 0,
+                    taskAccTime: 0,
+                },
+                cruIndex: -1,
+                curTaskList: []
+            },
+            methods: {
+                getData() {
+                    let v = this;
+                    let testData = [
+                        {
+                            tid: '',
+                            taskName: '测试',
+                            taskTimes: 1,
+                            taskAccTime: 0,
+                        }, {
+                            tid: '',
+                            taskName: '测试',
+                            taskTimes: 1,
+                            taskAccTime: 0,
+                        }, {
+                            tid: '',
+                            taskName: '测试',
+                            taskTimes: 1,
+                            taskAccTime: 0,
+                        }
+                    ]
+                    testData.forEach(x => {
+                        v.curTaskList.push(x)
+                    });
+
+
+                },
+                toDoingTask(index) {
+                    this.fl = false;
+                    this.cruIndex = index
+                    console.log(index)
+                    this.curTaskObject.tid = this.curTaskList[index].tid;
+                    this.curTaskObject.taskName = this.curTaskList[index].taskName;
+                    this.curTaskObject.taskTimes = this.curTaskList[index].taskTimes;
+                    this.curTaskObject.taskAccTime = this.curTaskList[index].taskAccTime;
+                },
+
+                returnTaskList() {
+                    this.fl = true;
+                    this.curTaskObject.tid = 0
+                    this.curTaskObject.taskName = ''
+                    this.curTaskObject.taskTimes = 0
+                    this.curTaskObject.taskAccTime = 0
+                },
+                start() {
+                    if (this.key === 0 && this.timer === -1) {
+                        this.key = 1;
+                        let v = this;
+                        document.getElementById('hv1').style.visibility = 'visible'
+                        document.getElementById('hv2').style.visibility = 'visible'
+                        this.timer = setInterval(() => {
+                            v.data = v.msToTime(v.times);
+                            v.times = v.times + 1000
+                        }, 1000);
+                    }
+                },
+                pause() {
+                    if (this.key === 1 && this.timer !== -1) {
+                        this.key = 0;
+                        clearInterval(this.timer);
+                        this.timer = -1;
+                    }
+                },
+                end() {
+                    if (this.key !== 0 && this.timer !== -1) {
+                        this.key = 0;
+                        clearInterval(this.timer);
+                        this.timer = -1;
+                        this.endData = this.data;
+                        this.endtimes = this.times;
+                        this.data = "00:00:00"
+                        /**
+                         * 结束提醒，返回列表
+                         * **/
+                        this.dialogTableVisible = true;
+                        this.times = 0;
+
+                    }
+                },
+                msToTime(duration) {
+                    let milliseconds = parseInt((duration % 1000) / 100),
+                        seconds = Math.floor((duration / 1000) % 60),
+                        minutes = Math.floor((duration / (1000 * 60)) % 60),
+                        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+                    hours = (hours < 10) ? "0" + hours : hours;
+                    minutes = (minutes < 10) ? "0" + minutes : minutes;
+                    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+                    return `${hours}:${minutes}:${seconds}`
+                },
+
+                getToday() {
+                    let today = new Date();
+                    let year = today.getFullYear();
+                    let month = String(today.getMonth() + 1).padStart(2, '0'); // getMonth 返回的是 0 到 11，需要加 1
+                    let day = String(today.getDate()).padStart(2, '0'); // getDate 返回月份的某一天 (1到31)。
+
+                    return {
+                        year: year,
+                        month: month,
+                        day: day
+                    };
+                },
+                Recording() {
+                    console.log(this.curTaskObject.taskAccTime)
+                    this.curTaskObject.taskTimes = this.curTaskObject.taskTimes + 1;
+                    this.curTaskObject.taskAccTime = this.endtimes + this.curTaskObject.taskAccTime;
+                    console.log(this.curTaskObject.taskAccTime)
+                    this.curTaskList[this.cruIndex].taskTimes = this.curTaskObject.taskTimes;
+                    this.curTaskList[this.cruIndex].taskAccTime = this.curTaskObject.taskAccTime;
+                    console.log(this.curTaskList[this.cruIndex])
+                    let TaskObject = JSON.parse(JSON.stringify(this.curTaskObject))
+                    this.dialogTableVisible = false;
+
+                    this.save(TaskObject)
+                    this.returnTaskList()
+                },
+                save(object) {
+                    console.log(object)
+                    let s = JSON.stringify(object);
+                    AndroidApp.edit(s)
+                },
+                msToHour(ms) {
+                    if (ms >= 3600000) {
+                        return `${ms / 3600000}小时`
+                    }
+                    if (ms >= 60000) {
+                        return `${ms / 60000}分钟`
+                    }
+                    if (ms >= 1000) {
+                        return `${ms / 1000} 秒`
+                    }
+                    return `${ms} 毫秒`
+
+                },
+                add() {
+
+                    this.curTaskList.push(this.fromAdd);
+                    this.addV = false;
+                    let s = JSON.stringify(this.fromAdd);
+                    this.fromAdd = {
+                        taskName: '',
+                        taskTimes: 0,
+                        taskAccTime: 0,
+                    }
+                    AndroidApp.add(s);
+                    /***后端***/
+                },
+                del() {
+                    let id = this.curTaskObject.tid;
+                    this.curTaskList.splice(this.cruIndex, 1);
+                    /****后端****/
+                    AndroidApp.del(id + "");
+                    this.returnTaskList();
+                },
+                edit() {
+                    this.curTaskList[this.cruIndex].taskName = this.curTaskObject.taskName;
+                    let object = this.curTaskList[this.cruIndex];
+                    /***后端****/
+                    this.editV = false;
+                    AndroidApp.update(JSON.stringify(object));
+                }
+
+            },
+            computed: {
+
+
+            },
+            mounted() {
+
+                console.log(this.msToTime(1000))
+                // this.start()
+
+                setTimeout(() => {
+                    this.getData()
+                }, 500);
+
+            },
+            destroyed() {
+
+            },
+        })
+
+
+    </script>
+</body>
+
+</html>
