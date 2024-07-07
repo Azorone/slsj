@@ -27,11 +27,11 @@
         width: 300px;
         height: 300px;
 
-       -webkit-background: #ddd;
+        -webkit-background: #ddd;
         overflow: hidden;
-       -webkit-mask:
-          linear-gradient(#000, #000 3px, transparent 3px, transparent calc(100% - 3px), #000 calc(100% - 3px), #000),
-          linear-gradient(90deg, #000, #000 3px, transparent 3px, transparent, transparent calc(100% - 3px), #000 calc(100% - 3px), #000);
+        -webkit-mask:
+            linear-gradient(#000, #000 3px, transparent 3px, transparent calc(100% - 3px), #000 calc(100% - 3px), #000),
+            linear-gradient(90deg, #000, #000 3px, transparent 3px, transparent, transparent calc(100% - 3px), #000 calc(100% - 3px), #000);
 
         &::after {
             content: '';
@@ -47,31 +47,36 @@
             -o-animation: rotate 4s linear infinite;
         }
     }
+
     @-moz-keyframes rotate {
         100% {
-              -webkit-transform: rotate(1turn);
+            -webkit-transform: rotate(1turn);
         }
     }
+
     @-webkit-keyframes rotate {
         100% {
-              -webkit-transform: rotate(1turn);
+            -webkit-transform: rotate(1turn);
         }
     }
+
     @-ms-keyframes rotate {
         100% {
-              -webkit-transform: rotate(1turn);
+            -webkit-transform: rotate(1turn);
         }
     }
+
     @-o-keyframes rotate {
         100% {
-              -webkit-transform: rotate(1turn);
+            -webkit-transform: rotate(1turn);
         }
     }
 </style>
 <script src="js/vue.js"></script>
 <script src="js/element.js"></script>
+
 <body>
-    <div id="app" >
+    <div id="app">
         <div style="position: absolute; width: 100%; height: 100%; z-index: 100;
              background-color: #fcfcfc; font-size: 60px;text-align: center;  " v-if="fi">
         </div>
@@ -247,7 +252,7 @@
         vm = new Vue({
             el: "#app",
             data: {
-                fi:false,
+                fi: false,
                 addV: false,
                 dialogTableVisible: false,
                 a: "",
@@ -273,10 +278,11 @@
                 },
                 cruIndex: -1,
                 curTaskList: [
-                {   taskName: 'hi',
-                    taskTimes: 0,
-                    taskAccTime: 0,
-                }
+                    {
+                        taskName: 'hi',
+                        taskTimes: 0,
+                        taskAccTime: 0,
+                    }
 
                 ]
             },
@@ -397,7 +403,7 @@
                     if (ms >= 1000) {
                         return `${ms / 1000} 秒`
                     }
-                    return `${ms} 毫秒`
+                    return `${ms.toFixed(2)} 毫秒`
 
                 },
                 add() {
@@ -410,7 +416,7 @@
                         taskAccTime: 0,
                     }
                     AndroidApp.add(s);
-                   this.getData()
+                    this.getData()
                     /***后端***/
                 },
                 del() {
